@@ -1,0 +1,6 @@
+[theme]
+primaryColor = "#6C63FF"                # Cosmic violet
+backgroundColor = "#0E0E2C"              # Deep space navy
+secondaryBackgroundColor = "#1C1C3C"     # Dark nebula blue
+textColor = "#E0E0FF"                    # Soft starlight white
+font = "sans serif"
