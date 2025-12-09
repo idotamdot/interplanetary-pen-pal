@@ -9,8 +9,13 @@
 <h1 align="center">🌌 Interplanetary Pen Pal 🌌</h1>
 <h3 align="center">"Earth is writing back."</h3>
 
+## 🚀 Deployment
 
+This application is designed to be deployed on Vercel. You will need to set up the following environment variables:
 
+- `DATABASE_URL`: The connection string for your Neon database.
+- `OPENAI_API_KEY`: Your API key for the OpenAI API.
+- `STREAMLIT_AUTHENTICATOR_KEY`: A secret key for the Streamlit authenticator. You can generate one with `python -c 'import secrets; print(secrets.token_urlsafe(32))'`.
 
 ## 🌟 co-Founders -
 
