@@ -5,6 +5,8 @@
 import streamlit as st
 from database import SessionLocal, Profile
 from auth import get_user
+from styles import get_cosmic_css, get_starfield_html
+from connection_features import CONSTELLATIONS, MOOD_COLORS
 
 def get_current_user(db):
     if "username" in st.session_state:
@@ -16,25 +18,39 @@ st.set_page_config(
     layout="centered"
 )
 
+# Apply cosmic styles
+st.markdown(get_cosmic_css(), unsafe_allow_html=True)
+st.markdown(get_starfield_html(), unsafe_allow_html=True)
+
 if "authentication_status" not in st.session_state or st.session_state["authentication_status"] is not True:
     st.warning("Please log in to access this page.")
 else:
     st.title("🌟 Create Your Cosmic Profile")
+    
+    st.markdown("""
+    <div class="cosmic-quote">
+        Your profile is your unique signature in the cosmos. 
+        Choose elements that resonate with your essence.
+    </div>
+    """, unsafe_allow_html=True)
 
     db = SessionLocal()
     user = get_current_user(db)
 
     if user:
         if not user.is_premium:
-            st.page_link("pages/5_Support_the_Project.py", label="Upgrade to Premium")
+            st.page_link("pages/5_Support_the_Project.py", label="✨ Upgrade to Premium for more features")
 
         profile = db.query(Profile).filter(Profile.user_id == user.id).first()
 
         st.markdown("### ✨ Basic Information")
         if profile:
-            name = st.text_input("Your Star Name", value=profile.star_name)
-            symbol = st.text_input("Your Symbolic Signature (emoji, glyph, constellation)", value=profile.symbol)
-            dream = st.text_area("Share a Dream, Memory, or Origin Story", value=profile.dream)
+            dream = st.text_area(
+                "Share a Dream, Memory, or Origin Story", 
+                value=profile.dream,
+                height=150,
+                help="This is your space to express what makes you... you."
+            )
         else:
             name = st.text_input("Your Star Name")
             symbol = st.text_input("Your Symbolic Signature (emoji, glyph, constellation)")
@@ -67,7 +83,7 @@ else:
         if st.button("Save Profile", type="primary"):
             if profile:
                 profile.star_name = name
-                profile.symbol = symbol
+                profile.symbol = constellation
                 profile.dream = dream
                 profile.latitude = latitude
                 profile.longitude = longitude

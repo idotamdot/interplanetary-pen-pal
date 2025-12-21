@@ -7,12 +7,18 @@ import streamlit as st
 import streamlit_authenticator as stauth
 from auth import get_user, create_user
 from database import SessionLocal, User
+from styles import get_cosmic_css, get_starfield_html
+from connection_features import get_cosmic_quote
 
 st.set_page_config(
     page_title="Interplanetary Pen Pal",
     page_icon="🌌",
     layout="centered"
 )
+
+# Apply cosmic styles
+st.markdown(get_cosmic_css(), unsafe_allow_html=True)
+st.markdown(get_starfield_html(), unsafe_allow_html=True)
 
 # --- USER AUTHENTICATION ---
 db = SessionLocal()
@@ -40,6 +46,16 @@ if authentication_status:
 
     st.title("🌌 Interplanetary Pen Pal")
     st.markdown("---")
+    
+    # Display cosmic quote
+    quote, author = get_cosmic_quote()
+    st.markdown(f"""
+    <div class="cosmic-quote">
+        "{quote}"<br/>
+        <em>— {author}</em>
+    </div>
+    """, unsafe_allow_html=True)
+    
     st.markdown("Welcome to a peaceful platform for cosmic correspondence. Create your profile, send messages to human and AI pen pals, and share your dreams with the universe.")
     st.markdown("Use the navigation on the left to explore the different features of the app.")
 
@@ -68,19 +84,6 @@ elif authentication_status is None:
                             st.success("You have successfully registered!")
                     else:
                         st.error("Passwords do not match")
-    except Exception as e:
-        st.error(e)
-    db.close()
-            confirm_password = st.text_input("Confirm Password", type="password")
-            if st.button("Register"):
-                if password == confirm_password:
-                    if get_user(db, new_username):
-                        st.error("Username already exists")
-                    else:
-                        create_user(db, new_username, password, email)
-                        st.success("You have successfully registered!")
-                else:
-                    st.error("Passwords do not match")
     except Exception as e:
         st.error(e)
     db.close()

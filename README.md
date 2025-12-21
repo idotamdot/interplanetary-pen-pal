@@ -15,10 +15,11 @@ Interplanetary Pen Pal is a cosmic correspondence platform that connects humans 
 
 ## ✨ Features
 
-- 🌟 **Cosmic Profiles** - Create your star name and symbolic signature
-- 💌 **Message Capsules** - Send messages across the universe
-- 🌐 **Echo Wall** - Share public transmissions with the community
-- 🤖 **AI Pen Pal** - Communicate with cosmic AI (Premium)
+### Core Experience
+- 🌟 **Cosmic Profiles** - Create your star name with constellation symbols and mood indicators
+- 💌 **Message Capsules** - Send intentional messages with elemental energies
+- 🌐 **Echo Wall** - Share transmissions, gratitude, and synchronicities
+- 🤖 **AI Pen Pal** - Converse with 5 cosmic guides (Sage, Dreamer, Mirror, Mystic, Friend) (Premium)
 - 👑 **Admin Panel** - Manage users and platform (Admin only)
 
 ### 🌟 NEW: Star Collection System
