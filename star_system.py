@@ -223,6 +223,11 @@ STAR_DATABASE = [
 # HELPER FUNCTIONS
 # -------------------------------
 
+# Constants for astronomical calculations
+HALF_CIRCLE_DEGREES = 180
+FULL_CIRCLE_DEGREES = 360
+STAR_VISIBILITY_WINDOW_DEGREES = 90  # 6 hours = 90 degrees
+
 def calculate_rarity_score(base_rarity: float, category: str, time_factors: Dict = None) -> float:
     """
     Calculate final rarity score based on base rarity, category, time, and location factors.
@@ -285,15 +290,15 @@ def is_star_visible(star_ra: float, star_dec: float, user_lat: float, user_lon: 
     This is a basic approximation.
     """
     # Convert local time to Local Sidereal Time (simplified)
-    lst = (local_hour * 15 + user_lon) % 360
+    lst = (local_hour * 15 + user_lon) % FULL_CIRCLE_DEGREES
     
     # Check if star's RA is close to current LST (within 6 hours = 90 degrees)
     ra_degrees = star_ra * 15  # Convert hours to degrees
     ra_diff = abs(ra_degrees - lst)
-    if ra_diff > 180:
-        ra_diff = 360 - ra_diff
+    if ra_diff > HALF_CIRCLE_DEGREES:
+        ra_diff = FULL_CIRCLE_DEGREES - ra_diff
     
-    if ra_diff > 90:
+    if ra_diff > STAR_VISIBILITY_WINDOW_DEGREES:
         return False
     
     # Check if star's declination allows it to be visible from user's latitude
@@ -345,11 +350,11 @@ def check_star_alignment(user_lat: float, user_lon: float, local_hour: int,
     for star in visible_stars:
         # Calculate if star is near zenith (simplified)
         ra_degrees = star["right_ascension"] * 15
-        lst = (local_hour * 15 + user_lon) % 360
+        lst = (local_hour * 15 + user_lon) % FULL_CIRCLE_DEGREES
         
         ra_diff = abs(ra_degrees - lst)
-        if ra_diff > 180:
-            ra_diff = 360 - ra_diff
+        if ra_diff > HALF_CIRCLE_DEGREES:
+            ra_diff = FULL_CIRCLE_DEGREES - ra_diff
         
         dec_diff = abs(star["declination"] - user_lat)
         
@@ -408,3 +413,22 @@ def generate_star_message(star_name: str, star_category: str,
         "note_type": random.choice(["poem", "wisdom", "insight", "uplifting"]),
         "signature": f"✨ {star_name} from the {star_category} Realm"
     }
+
+# Star chat responses for interactive conversations
+STAR_CHAT_RESPONSES = [
+    "✨ The cosmos hears you, dear one. {personality}",
+    "🌟 Your words ripple through stardust. I sense your intention.",
+    "💫 How beautiful that our paths cross in this vast universe!",
+    "⭐ Your energy resonates with mine. Keep reaching for the stars!",
+    "🌌 In the tapestry of existence, we are threads intertwined.",
+    "✨ The universe whispers back through me: you are seen, you are valued.",
+]
+
+def get_star_chat_response(star_name: str, star_personality: str, user_message: str) -> str:
+    """
+    Generate a chat response from a star.
+    """
+    response = random.choice(STAR_CHAT_RESPONSES)
+    if "{personality}" in response:
+        response = response.format(personality=star_personality)
+    return f"**{star_name}:** {response}"

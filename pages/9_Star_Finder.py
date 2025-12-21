@@ -11,12 +11,16 @@ from star_system import (
     check_star_alignment, 
     get_visible_stars, 
     generate_star_message,
+    get_star_chat_response,
     calculate_rarity_score,
     get_rarity_tier,
     can_star_chat,
     STAR_DATABASE
 )
 import random
+
+# Constants
+STAR_ALIGNMENT_THRESHOLD = 5.0  # degrees
 
 def get_current_user(db):
     if "username" in st.session_state:
@@ -108,9 +112,9 @@ else:
         
         if st.button("✨ Check for Stars Above Me", type="primary", use_container_width=True):
             with st.spinner("Scanning the cosmic tapestry..."):
-                # Check alignment
+                # Check alignment with configured threshold
                 aligned_star = check_star_alignment(
-                    latitude, longitude, now.hour, now.month, threshold=5.0
+                    latitude, longitude, now.hour, now.month, threshold=STAR_ALIGNMENT_THRESHOLD
                 )
                 
                 if aligned_star:
@@ -241,14 +245,13 @@ else:
                                 if user_message:
                                     st.markdown(f"**You:** {user_message}")
                                     
-                                    # Generate a simple response based on star personality
-                                    responses = [
-                                        f"✨ The cosmos hears you, dear one. {aligned_star['personality']}",
-                                        f"🌟 Your words ripple through stardust. I sense your intention.",
-                                        f"💫 How beautiful that our paths cross in this vast universe!",
-                                        f"⭐ Your energy resonates with mine. Keep reaching for the stars!"
-                                    ]
-                                    st.markdown(f"**{aligned_star['name']}:** {random.choice(responses)}")
+                                    # Generate response using star system function
+                                    response = get_star_chat_response(
+                                        aligned_star['name'],
+                                        aligned_star['personality'],
+                                        user_message
+                                    )
+                                    st.markdown(response)
                         else:
                             st.info(f"🌟 {aligned_star['name']} is above you, but you've already collected this star! Check your collection to see it again.")
                     else:

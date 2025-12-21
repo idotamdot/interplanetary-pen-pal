@@ -291,6 +291,8 @@ def generate_css(theme: Dict) -> str:
     """
     Generate CSS for the current theme with smooth transitions.
     """
+    transition_duration = "2s"  # Can be adjusted for faster/slower theme changes
+    
     css = f"""
     <style>
     /* Dynamic Theme Styles */
@@ -300,10 +302,13 @@ def generate_css(theme: Dict) -> str:
         --secondary-bg-color: {theme['secondary_bg']};
         --text-color: {theme['text']};
         --accent-color: {theme['accent']};
+        --transition-duration: {transition_duration};
     }}
     
     * {{
-        transition: background-color 2s ease, color 2s ease, border-color 2s ease;
+        transition: background-color var(--transition-duration) ease, 
+                    color var(--transition-duration) ease, 
+                    border-color var(--transition-duration) ease;
     }}
     
     .stApp {{
