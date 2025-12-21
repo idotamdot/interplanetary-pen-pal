@@ -128,7 +128,12 @@ def get_cosmic_quote():
     return quote, author
 
 def get_current_moon_phase():
-    """Approximates current moon phase (simplified)"""
+    """Approximates current moon phase (simplified for visual/conceptual purposes)
+    
+    Note: This is a simplified calculation for user engagement.
+    For production, consider using astronomy libraries like 'ephem' or 'astral'
+    for accurate lunar calculations based on actual celestial mechanics.
+    """
     # Simplified calculation - in production, use astronomy library
     day = datetime.now().day
     phase_index = (day % 29) // 4  # Approximate 8 phases over 29 days

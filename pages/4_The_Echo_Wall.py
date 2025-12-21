@@ -115,6 +115,8 @@ else:
                 st.rerun()
         
         # Show gratitude echoes
+        # Note: For production, consider adding 'echo_type' column to Echo model
+        # for better query performance and data integrity instead of string matching
         gratitude_echoes = db.query(Echo).filter(Echo.content.like('[GRATITUDE]%')).order_by(Echo.timestamp.desc()).limit(10).all()
         
         st.markdown("### 🌺 Recent Gratitudes")
@@ -149,6 +151,8 @@ else:
                 st.rerun()
         
         # Show synchronicity echoes
+        # Note: For production, consider adding 'echo_type' column to Echo model
+        # for better query performance and data integrity instead of string matching
         sync_echoes = db.query(Echo).filter(Echo.content.like('[SYNC]%')).order_by(Echo.timestamp.desc()).limit(10).all()
         
         st.markdown("### 🔮 Recent Synchronicities")
