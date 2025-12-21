@@ -43,45 +43,7 @@ else:
 
         profile = db.query(Profile).filter(Profile.user_id == user.id).first()
 
-        col1, col2 = st.columns([2, 1])
-        
-        with col1:
-            if profile:
-                name = st.text_input("✨ Your Star Name", value=profile.star_name)
-            else:
-                name = st.text_input("✨ Your Star Name", placeholder="e.g., Nova Wanderer, Stellar Dreamer")
-        
-        with col2:
-            # Constellation selector
-            current_symbol = profile.symbol if profile else None
-            if current_symbol and current_symbol in CONSTELLATIONS:
-                default_index = CONSTELLATIONS.index(current_symbol)
-            else:
-                default_index = 0
-            constellation = st.selectbox(
-                "🌌 Your Constellation", 
-                CONSTELLATIONS,
-                index=default_index
-            )
-        
-        # Mood/Energy
-        st.markdown("### 💫 Current Energy")
-        mood_list = list(MOOD_COLORS.keys())
-        mood = st.select_slider(
-            "How are you feeling right now?",
-            options=mood_list
-        )
-        
-        if mood:
-            mood_color = MOOD_COLORS[mood]
-            st.markdown(f"""
-            <div style="background: {mood_color}20; border-left: 4px solid {mood_color}; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
-                You're radiating <strong>{mood}</strong> energy right now.
-            </div>
-            """, unsafe_allow_html=True)
-        
-        # Dream/Story
-        st.markdown("### 🌠 Your Cosmic Story")
+        st.markdown("### ✨ Basic Information")
         if profile:
             dream = st.text_area(
                 "Share a Dream, Memory, or Origin Story", 
@@ -90,46 +52,64 @@ else:
                 help="This is your space to express what makes you... you."
             )
         else:
-            dream = st.text_area(
-                "Share a Dream, Memory, or Origin Story",
-                height=150,
-                placeholder="What brings you to this cosmic gathering? What dreams do you carry?",
-                help="This is your space to express what makes you... you."
-            )
+            name = st.text_input("Your Star Name")
+            symbol = st.text_input("Your Symbolic Signature (emoji, glyph, constellation)")
+            dream = st.text_area("Share a Dream, Memory, or Origin Story")
         
-        # Intentions
-        st.markdown("### 🎯 Your Intentions")
-        intentions = st.text_area(
-            "What are you calling into your life?",
-            height=100,
-            placeholder="e.g., More meaningful connections, creative flow, inner peace..."
-        )
+        st.markdown("---")
+        st.markdown("### 📍 Location (for Star Collection)")
+        st.info("💡 Your location helps us determine which stars are visible from where you are!")
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            if profile and profile.latitude:
+                latitude = st.number_input("Latitude", value=float(profile.latitude), min_value=-90.0, max_value=90.0, format="%.6f")
+            else:
+                latitude = st.number_input("Latitude", value=40.7128, min_value=-90.0, max_value=90.0, format="%.6f", help="Example: New York is 40.7128")
+        
+        with col2:
+            if profile and profile.longitude:
+                longitude = st.number_input("Longitude", value=float(profile.longitude), min_value=-180.0, max_value=180.0, format="%.6f")
+            else:
+                longitude = st.number_input("Longitude", value=-74.0060, min_value=-180.0, max_value=180.0, format="%.6f", help="Example: New York is -74.0060")
+        
+        if profile and profile.timezone:
+            timezone = st.text_input("Timezone (optional)", value=profile.timezone, help="Example: America/New_York")
+        else:
+            timezone = st.text_input("Timezone (optional)", value="UTC", help="Example: America/New_York")
+        
+        st.caption("🔍 You can find your coordinates at [latlong.net](https://www.latlong.net/)")
 
-        if st.button("🚀 Save Profile", use_container_width=True):
+        if st.button("Save Profile", type="primary"):
             if profile:
                 profile.star_name = name
                 profile.symbol = constellation
                 profile.dream = dream
+                profile.latitude = latitude
+                profile.longitude = longitude
+                profile.timezone = timezone
             else:
-                profile = Profile(user_id=user.id, star_name=name, symbol=constellation, dream=dream)
+                profile = Profile(
+                    user_id=user.id, 
+                    star_name=name, 
+                    symbol=symbol, 
+                    dream=dream,
+                    latitude=latitude,
+                    longitude=longitude,
+                    timezone=timezone
+                )
                 db.add(profile)
 
             db.commit()
             db.refresh(profile)
 
-            st.success("🛸 Profile Updated!")
+            st.success("🛸 Profile Registered for Interplanetary Exchange")
+            st.markdown(f"🌌 **{name}** — {symbol}")
+            st.markdown(f"🧬 *\"{dream}\"*")
+            st.markdown(f"📍 Location: {latitude:.2f}°, {longitude:.2f}°")
             
-            # Display the profile beautifully
             st.markdown("---")
-            st.markdown(f"""
-            <div class="cosmic-card">
-                <h2 style="text-align: center;">{constellation.split(' ')[0]} {name}</h2>
-                <p style="text-align: center; font-size: 1.2em;">{constellation}</p>
-                <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(108, 99, 255, 0.1); border-radius: 10px;">
-                    <p style="font-style: italic;">"{dream}"</p>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
+            st.success("✨ You're ready to collect stars! Visit the Star Finder to begin your journey.")
     else:
         st.error("Could not find user. Please log in again.")
 

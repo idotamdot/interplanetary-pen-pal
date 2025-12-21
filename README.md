@@ -22,21 +22,18 @@ Interplanetary Pen Pal is a cosmic correspondence platform that connects humans 
 - 🤖 **AI Pen Pal** - Converse with 5 cosmic guides (Sage, Dreamer, Mirror, Mystic, Friend) (Premium)
 - 👑 **Admin Panel** - Manage users and platform (Admin only)
 
-### Meaningful Connections
-- 🌙 **Daily Moon Phases** - Connect with lunar cycles and their wisdom
-- ✨ **Elemental Energies** - Infuse your messages with Water, Fire, Air, Earth, or Ether
-- 💫 **Daily Reflections** - Deep questions to explore your inner landscape
-- 🌠 **Soul Questions** - Profound prompts for self-discovery
-- 🙏 **Gratitude Garden** - Cultivate appreciation with the community
-- 🔮 **Synchronicity Wall** - Share meaningful coincidences and cosmic winks
-- 💭 **Cosmic Quotes** - Daily inspiration from wisdom keepers
+### 🌟 NEW: Star Collection System
 
-### Beautiful Aesthetics
-- ✨ Animated starfield background
-- 🌌 Glowing gradient text effects
-- 💫 Smooth fade-in animations
-- 🎨 Cosmic card designs with hover effects
-- 🌊 Flowing transitions and visual harmony
+Experience the cosmos like never before with our gamified star collection system:
+
+- 🔭 **Star Finder** - Discover which stars are visible from your location
+- ✨ **Collect Stars** - Receive beautiful messages when you're beneath a star
+- 🎨 **Dynamic Themes** - UI changes based on season and time of day
+- 💎 **Rarity System** - Collect Common, Rare, Epic, Legendary, and Mythic stars
+- 💬 **Star Chats** - Rare stars might hang around to chat with you!
+- 📜 **Star Notes** - Each star sends personalized poems and wisdom
+
+See [STAR_COLLECTION_README.md](STAR_COLLECTION_README.md) for detailed documentation.
 
 ## 📚 Documentation
 
@@ -80,6 +77,9 @@ export STREAMLIT_AUTHENTICATOR_KEY="your_secret_key"
 
 # Initialize database
 python database.py
+
+# Initialize star collection system
+python initialize_stars.py
 
 # Run the app
 streamlit run app.py
