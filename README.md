@@ -21,6 +21,19 @@ Interplanetary Pen Pal is a cosmic correspondence platform that connects humans 
 - 🤖 **AI Pen Pal** - Communicate with cosmic AI (Premium)
 - 👑 **Admin Panel** - Manage users and platform (Admin only)
 
+### 🌟 NEW: Star Collection System
+
+Experience the cosmos like never before with our gamified star collection system:
+
+- 🔭 **Star Finder** - Discover which stars are visible from your location
+- ✨ **Collect Stars** - Receive beautiful messages when you're beneath a star
+- 🎨 **Dynamic Themes** - UI changes based on season and time of day
+- 💎 **Rarity System** - Collect Common, Rare, Epic, Legendary, and Mythic stars
+- 💬 **Star Chats** - Rare stars might hang around to chat with you!
+- 📜 **Star Notes** - Each star sends personalized poems and wisdom
+
+See [STAR_COLLECTION_README.md](STAR_COLLECTION_README.md) for detailed documentation.
+
 ## 📚 Documentation
 
 **Planning for the Future:**
@@ -63,6 +76,9 @@ export STREAMLIT_AUTHENTICATOR_KEY="your_secret_key"
 
 # Initialize database
 python database.py
+
+# Initialize star collection system
+python initialize_stars.py
 
 # Run the app
 streamlit run app.py
