@@ -3,7 +3,7 @@
 # ======================================
 
 import os
-from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime, Boolean, ForeignKey
+from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime, Boolean, ForeignKey, Float, JSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 from datetime import datetime
@@ -36,6 +36,9 @@ class Profile(Base):
     star_name = Column(String)
     symbol = Column(String)
     dream = Column(Text)
+    latitude = Column(Float)
+    longitude = Column(Float)
+    timezone = Column(String)
     user = relationship("User", back_populates="profile")
 
 class Message(Base):
@@ -60,6 +63,54 @@ class DreamSeed(Base):
     user_id = Column(Integer, ForeignKey("users.id"))
     content = Column(Text)
     timestamp = Column(DateTime, default=datetime.utcnow)
+
+class Star(Base):
+    __tablename__ = "stars"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, index=True)
+    category = Column(String)  # Cosmic, Elemental, Mystical, Ancient, Celestial
+    rarity = Column(String)  # Common, Uncommon, Rare, Epic, Legendary, Mythic
+    rarity_score = Column(Float)
+    color = Column(String)
+    tone_frequency = Column(Float)
+    personality = Column(Text)
+    can_chat = Column(Boolean, default=False)
+    chat_duration = Column(Integer)  # seconds
+    right_ascension = Column(Float)
+    declination = Column(Float)
+    properties = Column(JSON)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+class CollectedStar(Base):
+    __tablename__ = "collected_stars"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    star_id = Column(Integer, ForeignKey("stars.id"))
+    collected_at = Column(DateTime, default=datetime.utcnow)
+    encounter_location_lat = Column(Float)
+    encounter_location_lon = Column(Float)
+    star = relationship("Star")
+
+class StarNote(Base):
+    __tablename__ = "star_notes"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    star_id = Column(Integer, ForeignKey("stars.id"))
+    content = Column(Text)
+    note_type = Column(String)  # poem, wisdom, insight, uplifting
+    color = Column(String)
+    timestamp = Column(DateTime, default=datetime.utcnow)
+    star = relationship("Star")
+
+class StarInteraction(Base):
+    __tablename__ = "star_interactions"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    star_id = Column(Integer, ForeignKey("stars.id"))
+    interaction_type = Column(String)  # encounter, chat, trade
+    metadata = Column(JSON)
+    timestamp = Column(DateTime, default=datetime.utcnow)
+    star = relationship("Star")
 
 # -------------------------------
 # DATABASE INITIALIZATION
