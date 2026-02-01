@@ -72,7 +72,7 @@ AGE_RANGES = {
         """
     },
     "elder_sage": {
-        "range": (65, 120),
+        "range": (65, 100),
         "label": "🌌 Elder Sage",
         "description": "A wise sage with a lifetime of cosmic wisdom to share.",
         "vocabulary_level": "sophisticated",

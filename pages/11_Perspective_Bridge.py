@@ -260,17 +260,33 @@ else:
         if "diplomatic_age" in st.session_state:
             user_age = st.session_state.diplomatic_age
         
-        # If no age, redirect to set it
+        # If no age, show age selection here instead of redirecting
         if not user_age:
             st.markdown("""
             <div class="perspective-header">
                 <h1>🔮 Perspective Bridge</h1>
-                <p>Before we can personalize your experience, please visit the Diplomatic Academy first!</p>
+                <p style="font-size: 1.2em;">Before we begin, please tell us about yourself!</p>
             </div>
             """, unsafe_allow_html=True)
             
-            if st.button("🎓 Go to Diplomatic Academy"):
-                st.switch_page("pages/10_Diplomatic_Academy.py")
+            st.markdown("""
+            <div style="background: rgba(108, 99, 255, 0.1); padding: 20px; border-radius: 15px; margin: 20px 0;">
+                <h3>🌟 What age group do you belong to?</h3>
+                <p>This helps us customize your experience with age-appropriate content!</p>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            age_choice = st.selectbox(
+                "Select your age range:",
+                options=list(AGE_RANGES.keys()),
+                format_func=lambda x: f"{AGE_RANGES[x]['label']} (ages {AGE_RANGES[x]['range'][0]}-{AGE_RANGES[x]['range'][1]})"
+            )
+            
+            if st.button("🔮 Enter the Perspective Bridge!", type="primary", use_container_width=True):
+                # Use the midpoint of the selected age range
+                age_range = AGE_RANGES[age_choice]['range']
+                st.session_state.diplomatic_age = (age_range[0] + age_range[1]) // 2
+                st.rerun()
             
             db.close()
             st.stop()
