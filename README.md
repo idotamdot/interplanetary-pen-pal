@@ -22,7 +22,50 @@ Interplanetary Pen Pal is a cosmic correspondence platform that connects humans 
 - 🤖 **AI Pen Pal** - Converse with 5 cosmic guides (Sage, Dreamer, Mirror, Mystic, Friend) (Premium)
 - 👑 **Admin Panel** - Manage users and platform (Admin only)
 
-### 🌟 NEW: Star Collection System
+### 🎓 NEW: Diplomatic Academy & AI Agent System
+
+**Teaching diplomatic thinking through AI-powered adventures!**
+
+Our revolutionary AI agent system adapts to users of all ages (5-120!) and teaches valuable perspective-taking and empathy skills through fun, interactive experiences:
+
+#### 🌟 Age-Adaptive AI Guides
+Every AI interaction automatically adjusts based on the user's age range:
+- **🌟 Young Explorer (5-12)** - Playful, wonder-filled adventures with simple language and lots of encouragement
+- **🚀 Teen Navigator (13-17)** - Relatable scenarios about friends, school, and identity with respectful challenge
+- **⭐ Cosmic Voyager (18-64)** - Nuanced, intellectually engaging discussions with philosophical depth
+- **🌌 Elder Sage (65+)** - Warm, wisdom-honoring conversations about legacy and meaning
+
+#### 🎭 The Diplomatic Academy (Free!)
+An interactive training ground for diplomatic thinking:
+- **Scenario Challenges** - Age-appropriate diplomatic scenarios to solve
+- **AI Guidance** - Receive personalized feedback on your approach
+- **Achievement System** - Earn badges like "Bridge Builder" and "Perspective Champion"
+- **Progress Tracking** - Watch your diplomatic skills grow!
+
+#### 👥 The Cosmic Council
+Five unique AI council members, each with a distinct perspective:
+- **🕊️ Harmony Weaver** - The Peacemaker who finds common ground
+- **🔍 Truth Seeker** - The Investigator who digs beneath the surface  
+- **💗 Heart Guardian** - The Empath who honors all feelings
+- **📚 Wisdom Keeper** - The Historian who learns from the past
+- **🔮 Future Visionary** - The Strategist who sees consequences
+
+Watch them discuss topics together, model healthy disagreement, and synthesize their perspectives!
+
+#### 🔮 Perspective Bridge (Free!)
+Interactive tools for perspective-shifting:
+- **Agent Debates** - Watch AI council members discuss any topic from multiple angles
+- **Guided Meditations** - Step into another's shoes through visualization
+- **Empathy Bridge** - Translate between two conflicting perspectives
+- **Surprise Features** - Random wisdom bombs, perspective roulette, and easter eggs!
+
+#### 🎁 Hidden Delights
+- Easter eggs for special phrases ("meaning of life", "hello world", etc.)
+- Random cosmic wisdom bombs that appear during sessions
+- Agent mood indicators showing how the AI guides are "feeling" today
+- Achievement unlocks with celebratory animations
+
+### 🌟 Star Collection System
 
 Experience the cosmos like never before with our gamified star collection system:
 

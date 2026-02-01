@@ -39,6 +39,7 @@ class Profile(Base):
     latitude = Column(Float)
     longitude = Column(Float)
     timezone = Column(String)
+    age = Column(Integer)  # User's age for adaptive content
     user = relationship("User", back_populates="profile")
 
 class Message(Base):
@@ -111,6 +112,39 @@ class StarInteraction(Base):
     metadata = Column(JSON)
     timestamp = Column(DateTime, default=datetime.utcnow)
     star = relationship("Star")
+
+# -------------------------------
+# DIPLOMATIC ACADEMY MODELS
+# -------------------------------
+
+class DiplomaticProgress(Base):
+    """Tracks user progress in the Diplomatic Academy"""
+    __tablename__ = "diplomatic_progress"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), unique=True)
+    perspective_exercises = Column(Integer, default=0)
+    council_consults = Column(Integer, default=0)
+    bridge_uses = Column(Integer, default=0)
+    scenarios_completed = Column(Integer, default=0)
+    perspectives_understood = Column(Integer, default=0)
+    total_exercises = Column(Integer, default=0)
+    total_points = Column(Integer, default=0)
+    achievements = Column(JSON, default=list)  # List of earned achievement keys
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+class DiplomaticExercise(Base):
+    """Records individual diplomatic exercises completed by users"""
+    __tablename__ = "diplomatic_exercises"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    exercise_type = Column(String)  # scenario, council, bridge, meditation
+    scenario_title = Column(String)
+    user_response = Column(Text)
+    ai_feedback = Column(Text)
+    council_members = Column(JSON)  # List of council members who participated
+    age_profile_used = Column(String)  # young_explorer, teen_navigator, etc.
+    timestamp = Column(DateTime, default=datetime.utcnow)
 
 # -------------------------------
 # DATABASE INITIALIZATION
