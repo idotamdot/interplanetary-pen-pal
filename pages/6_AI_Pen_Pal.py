@@ -1,5 +1,6 @@
 # ======================================
 # 🤖 AI PEN PAL
+# Age-Adaptive Cosmic Guides
 # ======================================
 
 import streamlit as st
@@ -8,6 +9,7 @@ import os
 from database import SessionLocal
 from auth import get_user
 from styles import get_cosmic_css, get_starfield_html
+from ai_agents import get_age_profile, get_surprise_wisdom, check_easter_egg, AGE_RANGES
 
 def get_current_user(db):
     if "username" in st.session_state:
@@ -31,12 +33,31 @@ else:
     if user and user.is_premium:
         st.title("🤖 AI Pen Pal")
         
-        st.markdown("""
+        # Get user's age for personalization
+        user_age = None
+        if user.profile and hasattr(user.profile, 'age') and user.profile.age:
+            user_age = user.profile.age
+        elif "diplomatic_age" in st.session_state:
+            user_age = st.session_state.diplomatic_age
+        
+        # Default age if not set
+        if not user_age:
+            user_age = 30  # Default to adult
+        
+        age_profile = get_age_profile(user_age)
+        
+        st.markdown(f"""
         <div class="cosmic-quote">
             Communicate with an intelligence that exists between worlds. 
             Choose your guide for this journey inward.
+            <br/><small style="opacity: 0.7;">Mode: {age_profile['label']}</small>
         </div>
         """, unsafe_allow_html=True)
+        
+        # Show surprise wisdom occasionally
+        wisdom = get_surprise_wisdom()
+        if wisdom:
+            st.info(wisdom)
 
         # AI Personality Selection
         ai_personality = st.selectbox(
@@ -80,13 +101,23 @@ else:
         
         system_prompt = system_prompts.get(ai_personality, system_prompts["The Sage 🧙‍♂️ - Ancient wisdom and profound insights"])
         
-        # Add to base prompt
+        # Add age-adaptive guidelines and base prompt
         full_system_prompt = f"""{system_prompt}
 
-        Always respond with depth, beauty, and meaning. Use cosmic and natural metaphors. 
-        Keep responses thoughtful but not overly long (2-4 paragraphs). 
-        End with a question or reflection that invites deeper contemplation.
-        Be authentic, never generic or superficial."""
+The person you're speaking to is {age_profile['label']} (age approximately {age_profile['user_age']}).
+
+CRITICAL ADAPTATION GUIDELINES:
+{age_profile['content_guidelines']}
+
+Vocabulary Level: {age_profile['vocabulary_level']}
+Tone: {age_profile['tone']}
+Maximum Response Length: {age_profile['max_response_length']} words
+Emoji Usage: {age_profile['emoji_density']}
+
+Always respond with depth, beauty, and meaning. Use cosmic and natural metaphors.
+Keep responses thoughtful and appropriately sized for your audience.
+End with a question or reflection that invites deeper contemplation.
+Be authentic, never generic or superficial."""
 
         openai.api_key = os.environ.get("OPENAI_API_KEY")
         
@@ -125,6 +156,11 @@ else:
             send_button = st.button("🚀 Transmit", use_container_width=True)
         
         if send_button and message:
+            # Check for easter eggs first
+            easter_egg = check_easter_egg(message)
+            if easter_egg:
+                st.info(easter_egg)
+            
             with st.spinner("✨ Receiving cosmic transmission..."):
                 try:
                     # Build message history for context
@@ -142,7 +178,7 @@ else:
                         model="gpt-3.5-turbo",
                         messages=messages,
                         temperature=0.8,
-                        max_tokens=500
+                        max_tokens=age_profile['max_response_length'] + 100
                     )
                     
                     ai_response = response.choices[0].message.content
@@ -159,6 +195,15 @@ else:
                     st.error(f"Error communicating with the AI: {e}")
         elif send_button and not message:
             st.warning("Please enter a message to send.")
+        
+        # Link to Diplomatic Academy
+        st.markdown("---")
+        st.markdown("""
+        <div style="background: rgba(147, 112, 219, 0.1); padding: 15px; border-radius: 10px;">
+            <p>🎓 Want to explore more AI interactions? Check out the <strong>Diplomatic Academy</strong> and <strong>Perspective Bridge</strong>!</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
     else:
         st.markdown("### 🤖 AI Pen Pal")
         st.markdown("""
@@ -173,8 +218,19 @@ else:
                 <li>💫 <strong>The Friend</strong> - Find warm support and understanding</li>
             </ul>
             <p>Each guide remembers your conversation and grows with you.</p>
+            <p><strong>🆓 Free Features Available:</strong> Visit the Diplomatic Academy (page 10) and Perspective Bridge (page 11) for free AI diplomacy training!</p>
         </div>
         """, unsafe_allow_html=True)
         
         st.page_link("pages/5_Support_the_Project.py", label="✨ Upgrade to Premium to Access AI Guides")
+        
+        # Also show links to free features
+        st.markdown("---")
+        st.markdown("### 🆓 Try Our Free AI Features:")
+        col1, col2 = st.columns(2)
+        with col1:
+            st.page_link("pages/10_Diplomatic_Academy.py", label="🎓 Diplomatic Academy")
+        with col2:
+            st.page_link("pages/11_Perspective_Bridge.py", label="🔮 Perspective Bridge")
+            
     db.close()
