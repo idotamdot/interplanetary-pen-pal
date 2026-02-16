@@ -108,11 +108,9 @@ def render_registration_form():
                                 st.error("Username already exists")
                             else:
                                 create_user(db, new_username, password, email)
-                                db.commit()
                                 st.success("You have successfully registered!")
                                 st.session_state.pop("_auth_cookie_key", None)
                                 st.session_state.pop("_authenticator", None)
-                                _build_authenticator()
                                 st.rerun()
                     else:
                         st.error("Passwords do not match")
