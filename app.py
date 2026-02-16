@@ -66,21 +66,15 @@ def _get_cookie_key():
         if cached_key:
             st.session_state["_auth_cookie_key"] = cached_key
             return cached_key
+        st.warning("Cached auth cookie key file was empty; generating a new key.")
 
     key = secrets.token_hex(32)
     persistence_note = ""
     try:
-        flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
+        flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC
         fd = os.open(str(key_path), flags, 0o600)
         with os.fdopen(fd, "w") as f:
             f.write(key)
-    except FileExistsError:
-        # Another process created the file between the existence check and open
-        cached_key = key_path.read_text().strip()
-        if cached_key:
-            st.session_state["_auth_cookie_key"] = cached_key
-            return cached_key
-        persistence_note = "(could not persist temporary key to disk: file already exists)"
     except OSError as err:
         persistence_note = f"(could not persist temporary key to disk: {err})"
 
