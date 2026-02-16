@@ -50,6 +50,12 @@ def _build_authenticator():
     return authenticator
 
 
+def _is_valid_hex_key(value: str, length: int = 64) -> bool:
+    return isinstance(value, str) and len(value) == length and all(
+        c in "0123456789abcdef" for c in value.lower()
+    )
+
+
 def _get_cookie_key():
     if "_auth_cookie_key" in st.session_state:
         return st.session_state["_auth_cookie_key"]
@@ -67,10 +73,7 @@ def _get_cookie_key():
     key_path = Path(tempfile.gettempdir()) / f"ipp_auth_cookie_key_{app_id}"
     if key_path.exists():
         cached_key = key_path.read_text().strip()
-        is_valid_cached = len(cached_key) == 64 and all(
-            c in "0123456789abcdef" for c in cached_key.lower()
-        )
-        if cached_key and is_valid_cached:
+        if cached_key and _is_valid_hex_key(cached_key):
             st.session_state["_auth_cookie_key"] = cached_key
             return cached_key
         st.warning("Cached auth cookie key file was missing or invalid; generating a new key.")
@@ -78,9 +81,12 @@ def _get_cookie_key():
     key = secrets.token_hex(32)
     persistence_note = ""
     try:
-        flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC
-        if not key_path.exists():
-            flags |= os.O_EXCL
+        flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
+        fd = os.open(str(key_path), flags, 0o600)
+        with os.fdopen(fd, "w") as f:
+            f.write(key)
+    except FileExistsError:
+        flags = os.O_WRONLY | os.O_TRUNC
         fd = os.open(str(key_path), flags, 0o600)
         with os.fdopen(fd, "w") as f:
             f.write(key)
