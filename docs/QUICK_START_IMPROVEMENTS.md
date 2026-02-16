@@ -9,7 +9,8 @@ This guide provides a fast-track reference for implementing the top priority imp
 ### 1. Fix Duplicate Registration Code
 **File:** `app.py` (lines 74-86)  
 **Issue:** Duplicate registration code block  
-**Fix:** Remove lines 74-86
+**Fix:** Remove lines 74-86  
+**Status:** ✅ Completed (registration now lives in a single helper with context-managed DB sessions)
 
 ```python
 # BEFORE (lines 54-86):
@@ -45,7 +46,8 @@ db.close()
 ### 2. Update Deprecated Streamlit Function
 **Files:** `pages/4_The_Echo_Wall.py`, `pages/7_Admin.py`  
 **Issue:** `st.experimental_rerun()` is deprecated  
-**Fix:** Replace with `st.rerun()`
+**Fix:** Replace with `st.rerun()`  
+**Status:** ✅ Completed in Admin page (`st.rerun`)
 
 ```python
 # BEFORE:
