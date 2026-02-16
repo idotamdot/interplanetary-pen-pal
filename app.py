@@ -58,7 +58,7 @@ def _get_cookie_key():
         st.session_state["_auth_cookie_key"] = env_key
         return env_key
 
-    app_id = hashlib.sha256(str(Path(__file__).resolve()).encode()).hexdigest()[:32]
+    app_id = hashlib.sha256(str(Path(__file__).resolve()).encode()).hexdigest()
     key_path = Path(tempfile.gettempdir()) / f"ipp_auth_cookie_key_{app_id}"
     if key_path.exists():
         cached_key = key_path.read_text().strip()
@@ -80,7 +80,7 @@ def _get_cookie_key():
             "STREAMLIT_AUTHENTICATOR_KEY is not set. Using a temporary key; "
             "users may be logged out if the app restarts. "
             "Set the environment variable for persistent, secure sessions."
-            f"{persistence_note}"
+            f"{' ' + persistence_note if persistence_note else ''}"
         )
         st.session_state["_auth_cookie_key_warned"] = True
     st.session_state["_auth_cookie_key"] = key
@@ -103,6 +103,7 @@ def render_registration_form():
                                 st.error("Username already exists")
                             else:
                                 create_user(db, new_username, password, email)
+                                db.commit()
                                 st.success("You have successfully registered!")
                                 st.session_state.pop("_auth_cookie_key", None)
                                 st.session_state.pop("_authenticator", None)
