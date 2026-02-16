@@ -5,6 +5,8 @@
 
 import os
 import secrets
+import tempfile
+from pathlib import Path
 import streamlit as st
 import streamlit_authenticator as stauth
 from auth import get_user, create_user
@@ -55,12 +57,25 @@ def _get_cookie_key():
         st.session_state["_auth_cookie_key"] = env_key
         return env_key
 
+    key_path = Path(tempfile.gettempdir()) / "ipp_auth_cookie_key"
+    if key_path.exists():
+        cached_key = key_path.read_text().strip()
+        if cached_key:
+            st.session_state["_auth_cookie_key"] = cached_key
+            return cached_key
+
+    key = secrets.token_hex(32)
+    try:
+        key_path.write_text(key)
+    except Exception:
+        # If writing fails, continue with in-memory key and warning
+        pass
+
     st.warning(
         "STREAMLIT_AUTHENTICATOR_KEY is not set. Using a temporary key; "
-        "users will be logged out if the app restarts. "
+        "users may be logged out if the app restarts. "
         "Set the environment variable for persistent, secure sessions."
     )
-    key = secrets.token_hex(32)
     st.session_state["_auth_cookie_key"] = key
     return key
 
@@ -82,7 +97,6 @@ def render_registration_form():
                             else:
                                 create_user(db, new_username, password, email)
                                 st.success("You have successfully registered!")
-                                st.session_state.pop("_auth_cookie_key", None)
                                 st.session_state.pop("_authenticator", None)
                                 st.rerun()
                     else:
