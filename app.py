@@ -58,7 +58,7 @@ def _get_cookie_key():
         st.session_state["_auth_cookie_key"] = env_key
         return env_key
 
-    app_id = hashlib.sha256(str(Path(__file__).resolve()).encode()).hexdigest()[:8]
+    app_id = hashlib.sha256(str(Path(__file__).resolve()).encode()).hexdigest()[:16]
     key_path = Path(tempfile.gettempdir()) / f"ipp_auth_cookie_key_{app_id}"
     if key_path.exists():
         cached_key = key_path.read_text().strip()
@@ -69,8 +69,9 @@ def _get_cookie_key():
     key = secrets.token_hex(32)
     persistence_note = ""
     try:
-        key_path.write_text(key)
-        key_path.chmod(0o600)
+        fd = os.open(str(key_path), os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+        with os.fdopen(fd, "w") as f:
+            f.write(key)
     except Exception:
         persistence_note = " (could not persist temporary key to disk)"
 
@@ -101,6 +102,7 @@ def render_registration_form():
                             else:
                                 create_user(db, new_username, password, email)
                                 st.success("You have successfully registered!")
+                                st.session_state.pop("_auth_cookie_key", None)
                                 st.session_state.pop("_authenticator", None)
                                 st.rerun()
                     else:
