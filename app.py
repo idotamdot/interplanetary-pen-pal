@@ -6,6 +6,7 @@
 import hashlib
 import os
 import secrets
+import socket
 import tempfile
 from pathlib import Path
 import streamlit as st
@@ -58,20 +59,28 @@ def _get_cookie_key():
         st.session_state["_auth_cookie_key"] = env_key
         return env_key
 
-    app_identifier = os.environ.get("STREAMLIT_APP_ID", "interplanetary_pen_pal")
+    app_identifier = os.environ.get(
+        "STREAMLIT_APP_ID",
+        f"interplanetary_pen_pal_{socket.gethostname()}_{Path.cwd().resolve()}",
+    )
     app_id = hashlib.sha256(app_identifier.encode()).hexdigest()
     key_path = Path(tempfile.gettempdir()) / f"ipp_auth_cookie_key_{app_id}"
     if key_path.exists():
         cached_key = key_path.read_text().strip()
-        if cached_key:
+        is_valid_cached = len(cached_key) == 64 and all(
+            c in "0123456789abcdef" for c in cached_key.lower()
+        )
+        if cached_key and is_valid_cached:
             st.session_state["_auth_cookie_key"] = cached_key
             return cached_key
-        st.warning("Cached auth cookie key file was empty; generating a new key.")
+        st.warning("Cached auth cookie key file was missing or invalid; generating a new key.")
 
     key = secrets.token_hex(32)
     persistence_note = ""
     try:
         flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC
+        if not key_path.exists():
+            flags |= os.O_EXCL
         fd = os.open(str(key_path), flags, 0o600)
         with os.fdopen(fd, "w") as f:
             f.write(key)
