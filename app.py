@@ -3,6 +3,7 @@
 # MAIN APP ENTRY POINT
 # ======================================
 
+import hashlib
 import os
 import secrets
 import tempfile
@@ -57,7 +58,8 @@ def _get_cookie_key():
         st.session_state["_auth_cookie_key"] = env_key
         return env_key
 
-    key_path = Path(tempfile.gettempdir()) / "ipp_auth_cookie_key"
+    app_id = hashlib.sha256(str(Path(__file__).resolve()).encode()).hexdigest()[:8]
+    key_path = Path(tempfile.gettempdir()) / f"ipp_auth_cookie_key_{app_id}"
     if key_path.exists():
         cached_key = key_path.read_text().strip()
         if cached_key:
@@ -65,16 +67,18 @@ def _get_cookie_key():
             return cached_key
 
     key = secrets.token_hex(32)
+    persistence_note = ""
     try:
         key_path.write_text(key)
+        key_path.chmod(0o600)
     except Exception:
-        # If writing fails, continue with in-memory key and warning
-        pass
+        persistence_note = " (could not persist temporary key to disk)"
 
     st.warning(
         "STREAMLIT_AUTHENTICATOR_KEY is not set. Using a temporary key; "
         "users may be logged out if the app restarts. "
         "Set the environment variable for persistent, secure sessions."
+        f"{persistence_note}"
     )
     st.session_state["_auth_cookie_key"] = key
     return key
