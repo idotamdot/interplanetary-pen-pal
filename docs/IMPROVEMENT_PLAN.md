@@ -34,9 +34,9 @@ This document outlines a comprehensive plan to elevate the Interplanetary Pen Pa
 ### Tasks
 
 #### 1.1 Fix Critical Bugs
-- [ ] Remove duplicate registration code in `app.py` (lines 74-86)
-- [ ] Fix database session management (ensure proper closing)
-- [ ] Update deprecated Streamlit functions (`st.experimental_rerun` → `st.rerun`)
+- [x] Remove duplicate registration code in `app.py` (lines 74-86)
+- [x] Fix database session management (ensure proper closing)
+- [x] Update deprecated Streamlit functions (`st.experimental_rerun` → `st.rerun`)
 
 #### 1.2 Input Validation & Sanitization
 ```python
