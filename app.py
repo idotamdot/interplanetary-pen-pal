@@ -57,7 +57,8 @@ def _get_cookie_key():
 
     st.warning(
         "STREAMLIT_AUTHENTICATOR_KEY is not set. Using a temporary key; "
-        "set the environment variable for persistent, secure sessions."
+        "users will be logged out if the app restarts. "
+        "Set the environment variable for persistent, secure sessions."
     )
     key = secrets.token_hex(32)
     st.session_state["_auth_cookie_key"] = key
@@ -81,6 +82,7 @@ def render_registration_form():
                             else:
                                 create_user(db, new_username, password, email)
                                 st.success("You have successfully registered!")
+                                st.session_state.pop("_auth_cookie_key", None)
                                 st.session_state.pop("_authenticator", None)
                                 st.rerun()
                     else:
