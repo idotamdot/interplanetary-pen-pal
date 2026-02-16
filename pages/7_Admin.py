@@ -40,7 +40,7 @@ else:
                     if st.button(f"Make Premium", key=f"premium_{u.id}"):
                         u.is_premium = True
                         db.commit()
-                        st.experimental_rerun()
+                        st.rerun()
             st.markdown("---")
     else:
         st.error("You do not have permission to access this page.")
