@@ -4,6 +4,7 @@
 # ======================================
 
 import os
+import secrets
 import streamlit as st
 import streamlit_authenticator as stauth
 from auth import get_user, create_user
@@ -35,9 +36,21 @@ def _build_authenticator():
     return stauth.Authenticate(
         credentials,
         "interplanetary_pen_pal",  # cookie name
-        os.environ.get("STREAMLIT_AUTHENTICATOR_KEY", "abcdef"),  # cookie key
+        _get_cookie_key(),  # cookie key
         cookie_expiry_days=30,
     )
+
+
+def _get_cookie_key():
+    env_key = os.environ.get("STREAMLIT_AUTHENTICATOR_KEY")
+    if env_key:
+        return env_key
+
+    st.warning(
+        "STREAMLIT_AUTHENTICATOR_KEY is not set. Using a temporary key; "
+        "set the environment variable for persistent, secure sessions."
+    )
+    return secrets.token_hex(32)
 
 
 def render_registration_form():
