@@ -24,6 +24,9 @@ st.markdown(get_starfield_html(), unsafe_allow_html=True)
 
 
 def _build_authenticator():
+    if "_authenticator" in st.session_state:
+        return st.session_state["_authenticator"]
+
     credentials = {"usernames": {}}
     with SessionLocal() as db:
         users = db.query(User).all()
@@ -33,24 +36,32 @@ def _build_authenticator():
                 "password": user.hashed_password,
             }
 
-    return stauth.Authenticate(
+    authenticator = stauth.Authenticate(
         credentials,
         "interplanetary_pen_pal",  # cookie name
         _get_cookie_key(),  # cookie key
         cookie_expiry_days=30,
     )
+    st.session_state["_authenticator"] = authenticator
+    return authenticator
 
 
 def _get_cookie_key():
+    if "_auth_cookie_key" in st.session_state:
+        return st.session_state["_auth_cookie_key"]
+
     env_key = os.environ.get("STREAMLIT_AUTHENTICATOR_KEY")
     if env_key:
+        st.session_state["_auth_cookie_key"] = env_key
         return env_key
 
     st.warning(
         "STREAMLIT_AUTHENTICATOR_KEY is not set. Using a temporary key; "
         "set the environment variable for persistent, secure sessions."
     )
-    return secrets.token_hex(32)
+    key = secrets.token_hex(32)
+    st.session_state["_auth_cookie_key"] = key
+    return key
 
 
 def render_registration_form():
@@ -70,6 +81,8 @@ def render_registration_form():
                             else:
                                 create_user(db, new_username, password, email)
                                 st.success("You have successfully registered!")
+                                st.session_state.pop("_authenticator", None)
+                                st.rerun()
                     else:
                         st.error("Passwords do not match")
     except Exception as e:
