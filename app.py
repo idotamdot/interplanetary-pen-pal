@@ -58,7 +58,8 @@ def _get_cookie_key():
         st.session_state["_auth_cookie_key"] = env_key
         return env_key
 
-    app_id = hashlib.sha256(str(Path(__file__).resolve()).encode()).hexdigest()
+    app_identifier = os.environ.get("STREAMLIT_APP_ID", "interplanetary_pen_pal")
+    app_id = hashlib.sha256(app_identifier.encode()).hexdigest()
     key_path = Path(tempfile.gettempdir()) / f"ipp_auth_cookie_key_{app_id}"
     if key_path.exists():
         cached_key = key_path.read_text().strip()
@@ -69,19 +70,22 @@ def _get_cookie_key():
     key = secrets.token_hex(32)
     persistence_note = ""
     try:
-        fd = os.open(str(key_path), os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+        flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
+        fd = os.open(str(key_path), flags, 0o600)
         with os.fdopen(fd, "w") as f:
             f.write(key)
     except Exception:
         persistence_note = " (could not persist temporary key to disk)"
 
     if not st.session_state.get("_auth_cookie_key_warned"):
-        st.warning(
+        message = (
             "STREAMLIT_AUTHENTICATOR_KEY is not set. Using a temporary key; "
             "users may be logged out if the app restarts. "
             "Set the environment variable for persistent, secure sessions."
-            f"{' ' + persistence_note if persistence_note else ''}"
         )
+        if persistence_note:
+            message = f"{message} {persistence_note}"
+        st.warning(message)
         st.session_state["_auth_cookie_key_warned"] = True
     st.session_state["_auth_cookie_key"] = key
     return key
